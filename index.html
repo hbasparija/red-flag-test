@@ -1,1 +1,586 @@
-<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><meta name="viewport" content="width=1104,initial-scale=0.3,maximum-scale=1"><title>Creative Cloud Desktop</title><link rel="preload font" href="./fonts/AdobeClean-LightIt.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-It.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-Bold.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-Light.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-Regular.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-ExtraBold.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-SemiCnIt.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-BoldSemiCnIt.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-SemiCn.otf" as="font"><link rel="preload font" href="./fonts/AdobeClean-BoldSemiCn.otf" as="font"><link href="clean.css" rel="stylesheet"></head><body><div id="root"></div><script src="../resources/legacy/host/libs/json2xml.min.js"></script><script defer="defer" src="index.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Risk Map — Studio</title>
+<style>
+  :root {
+    --navy:#1f3a5f; --blue:#3d6db5; --lblue:#dce8f7; --orange:#e07b39;
+    --red:#b84a4a; --green:#3a7d5c; --gray:#6b7280; --bg:#f4f6fa; --line:#e3e8f0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",-apple-system,Helvetica,Arial,sans-serif;background:var(--bg);color:#222}
+  header{background:var(--navy);color:#fff;padding:16px 28px;display:flex;justify-content:space-between;align-items:center}
+  header h1{font-size:20px;font-weight:600}
+  header .sub{font-size:12px;opacity:.7;margin-top:2px}
+  header button{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:13px;cursor:pointer;margin-left:8px}
+  header button:hover{background:rgba(255,255,255,.28)}
+  .screen{max-width:1180px;margin:26px auto;padding:0 24px}
+  .card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(31,58,95,.10);padding:28px;margin-bottom:20px}
+  h2{color:var(--navy);font-size:20px;margin-bottom:6px}
+  h3{color:var(--blue);font-size:15px;margin:18px 0 8px}
+  p.hint{color:var(--gray);font-size:13.5px;line-height:1.55;margin-bottom:14px}
+  input[type=text],input[type=number]{padding:9px 12px;border:1px solid #c9d2e0;border-radius:7px;font-size:14px;width:100%}
+  .row{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:var(--lblue);border:1px solid var(--blue);color:var(--navy);border-radius:18px;padding:6px 14px;font-size:13.5px;font-weight:600;margin:0 8px 8px 0}
+  .pill button{border:none;background:none;color:var(--red);font-weight:700;cursor:pointer;font-size:14px}
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14.5px;font-weight:600;cursor:pointer}
+  .btn:hover{background:var(--navy)} .btn:disabled{background:#b9c4d6;cursor:default}
+  .btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+  .btn.small{padding:7px 14px;font-size:13px}
+  .foot{display:flex;justify-content:space-between;margin-top:22px}
+  .choice{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:10px;cursor:pointer;font-size:14.5px}
+  .choice:hover{border-color:var(--blue);background:#f7faff}
+  .choice b{color:var(--navy)}
+  .choice span{display:block;color:var(--gray);font-size:12.5px;margin-top:3px}
+  .steps{display:flex;gap:6px;margin-bottom:18px}
+  .steps div{flex:1;height:5px;border-radius:3px;background:#d9dfe9}
+  .steps div.on{background:var(--blue)}
+  .scale{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 4px}
+  .scale button{border:1.5px solid #c9d2e0;background:#fff;border-radius:8px;padding:8px 11px;font-size:12.5px;cursor:pointer}
+  .scale button:hover{border-color:var(--blue)}
+  .scale button.sel{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:700}
+  .qbox{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px;background:#fbfcfe}
+  .qbox .q{font-size:14.5px;color:#222;line-height:1.5}
+  .qbox .q b{color:var(--navy)}
+  .cond{font-size:12.5px;color:var(--gray);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+  .dash{display:flex;gap:0;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(31,58,95,.10);overflow:hidden}
+  .canvas{flex:1 1 auto;padding:10px;min-width:0}
+  svg{width:100%;height:auto;display:block}
+  .side{flex:0 0 300px;border-left:1px solid var(--line);padding:20px;background:#fbfcfe}
+  .side h4{font-size:13px;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px}
+  .exp{background:var(--navy);color:#fff;border-radius:10px;padding:13px 15px}
+  .exp .lab{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.75}
+  .exp .val{font-size:25px;font-weight:700;margin-top:2px}
+  .exp .base{font-size:12px;opacity:.8;margin-top:2px}
+  .drv{margin-bottom:9px}
+  .drv .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:2px}
+  .drv .bar{background:#e8edf5;border-radius:4px;height:8px}
+  .drv .fill{height:8px;border-radius:4px}
+  .drv .sub{font-size:11px;color:var(--gray);margin-top:1px}
+  .node{cursor:pointer}
+  .node rect.body{fill:#fff;stroke:var(--blue);stroke-width:2}
+  .node.evYes rect.body{stroke:var(--red);stroke-width:3.5;fill:#fff7f7}
+  .node.evNo rect.body{stroke:var(--green);stroke-width:3.5;fill:#f6fbf8}
+  .node text.name{font-size:12.5px;font-weight:600;fill:var(--navy)}
+  .node text.pct{font-size:15px;font-weight:700;fill:var(--navy)}
+  .barbg{fill:#e8edf5} .barfill{fill:var(--blue)}
+  .barbase{stroke:var(--orange);stroke-width:2;stroke-dasharray:3 2}
+  .edge{stroke:var(--navy);stroke-width:2;fill:none;marker-end:url(#arrow);opacity:.75}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:9px;font-size:13.5px;opacity:0;transition:opacity .3s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Living Risk Map <span style="font-weight:300">Studio</span></h1>
+    <div class="sub">Build a cause-and-effect risk model — no statistics required</div>
+  </div>
+  <div>
+    <button onclick="exportModel()">Export model</button>
+    <button onclick="document.getElementById('importFile').click()">Import</button>
+    <button onclick="go('home')">Home</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importModel(event)">
+  </div>
+</header>
+<div class="screen" id="screen"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= state ================= */
+let templates = {};
+let model = null;          // {title, impactUnit, nodes:[...]}
+let evidence = {};
+let baseline = null;       // marginals with no evidence
+let baseExposure = 0;
+let wiz = {};              // wizard working state
+
+const SCALE = [
+  ["Almost never", 0.02], ["Very rare", 0.05], ["Rare", 0.10],
+  ["Occasional", 0.20], ["Possible", 0.35], ["Even odds", 0.50],
+  ["Likely", 0.65], ["Very likely", 0.80], ["Almost certain", 0.95],
+];
+
+const $ = id => document.getElementById(id);
+const scr = $("screen");
+const fmtMoney = v => v >= 1e6 ? "$" + (v/1e6).toFixed(1).replace(/\.0$/,"") + "M" : "$" + Math.round(v/1e3) + "K";
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+
+/* ---------- auto-save (browser storage; survives closing the page) ---------- */
+const store = {
+  set(k, v) { try { localStorage.setItem("lrm_" + k, JSON.stringify(v)); } catch(e) {} },
+  get(k)    { try { return JSON.parse(localStorage.getItem("lrm_" + k)); } catch(e) { return null; } },
+  del(k)    { try { localStorage.removeItem("lrm_" + k); } catch(e) {} },
+};
+
+/* ---------- built-in engine (fallback when app.py isn't running) ----------
+   Exact inference by joint enumeration — instant up to ~18 risks. When the
+   Flask backend is reachable it is used instead (identical results). */
+let offlineMode = false;
+
+function localInfer(net, evidence) {
+  const nodes = net.nodes, n = nodes.length, idx = {};
+  nodes.forEach((nd,i)=> idx[nd.id]=i);
+  const marg = new Array(n).fill(0);
+  let Z = 0;
+  for (let m = 0; m < (1<<n); m++) {
+    const state = nodes.map((_,i)=> (m>>i)&1);
+    let ok = true;
+    for (const id in evidence) if (state[idx[id]] !== (evidence[id]?1:0)) { ok=false; break; }
+    if (!ok) continue;
+    let pr = 1;
+    for (let i = 0; i < n; i++) {
+      const nd = nodes[i];
+      const pTrue = nd.parents.length === 0 ? nd.prior
+        : nd.cpt[nd.parents.map(p=>state[idx[p]]).join("")];
+      pr *= state[i] ? pTrue : 1 - pTrue;
+    }
+    Z += pr;
+    for (let i = 0; i < n; i++) if (state[i]) marg[i] += pr;
+  }
+  const out = {};
+  nodes.forEach((nd,i)=> out[nd.id] = marg[i]/Z);
+  return out;
+}
+const localExposure = (net, probs) =>
+  net.nodes.filter(n=>n.impact).reduce((s,n)=>s + n.impact*probs[n.id], 0);
+
+function localApi(path, body) {
+  const net = body.network, ev = body.evidence || {};
+  if (path === "/api/infer") {
+    const m = localInfer(net, ev);
+    return { marginals: m, exposure: localExposure(net, m) };
+  }
+  if (path === "/api/drivers") {
+    const rows = net.nodes
+      .filter(nd => nd.parents.length === 0 && ev[nd.id] === undefined)
+      .map(nd => {
+        const hi = localExposure(net, localInfer(net, {...ev, [nd.id]: true}));
+        const lo = localExposure(net, localInfer(net, {...ev, [nd.id]: false}));
+        return { id: nd.id, name: nd.name, prior: nd.prior, swing: hi-lo, save5: .05*(hi-lo) };
+      }).sort((a,b)=>b.swing-a.swing);
+    return { drivers: rows };
+  }
+}
+
+async function api(path, body) {
+  if (offlineMode) return localApi(path, body);
+  try {
+    const r = await fetch(path, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  } catch (e) {
+    offlineMode = true;
+    toast("Using built-in engine (app.py not detected) — fully functional, identical results");
+    return localApi(path, body);
+  }
+}
+
+/* ================= navigation ================= */
+function go(view) {
+  if (view === "home") renderHome();
+  else if (view === "dash") renderDash();
+}
+
+/* ================= HOME ================= */
+const TEMPLATES_FALLBACK = {
+  "supplier": { "title": "Key Supplier Risk", "impactUnit": "per quarter", "nodes": [
+    { "id":"FS","name":"Supplier Financial Stress","parents":[],"prior":0.20,"x":150,"y":75 },
+    { "id":"CC","name":"Capacity Constraint","parents":[],"prior":0.15,"x":410,"y":75 },
+    { "id":"LD","name":"Logistics Disruption","parents":[],"prior":0.10,"x":670,"y":75 },
+    { "id":"QS","name":"Quality Slippage","parents":["FS","CC"],"x":280,"y":235,"cpt":{"11":0.70,"10":0.40,"01":0.45,"00":0.05} },
+    { "id":"DD","name":"Delivery Delay","parents":["FS","CC","LD"],"x":545,"y":235,"cpt":{"111":0.95,"110":0.85,"101":0.90,"100":0.60,"011":0.85,"010":0.50,"001":0.65,"000":0.05} },
+    { "id":"PI","name":"Production Impact","parents":["DD","QS"],"x":410,"y":395,"impact":500000,"cpt":{"11":0.90,"10":0.55,"01":0.45,"00":0.03} } ] },
+  "project": { "title": "Project Overrun Risk", "impactUnit": "per project", "nodes": [
+    { "id":"SC","name":"Scope Creep","parents":[],"prior":0.30,"x":150,"y":75 },
+    { "id":"ST","name":"Key Staff Turnover","parents":[],"prior":0.15,"x":410,"y":75 },
+    { "id":"VD","name":"Vendor Delay","parents":[],"prior":0.20,"x":670,"y":75 },
+    { "id":"SS","name":"Schedule Slippage","parents":["SC","ST","VD"],"x":410,"y":235,"cpt":{"111":0.95,"110":0.90,"101":0.90,"100":0.70,"011":0.85,"010":0.55,"001":0.60,"000":0.10} },
+    { "id":"BO","name":"Budget Overrun","parents":["SS","SC"],"x":255,"y":395,"impact":250000,"cpt":{"11":0.85,"10":0.60,"01":0.40,"00":0.05} },
+    { "id":"QC","name":"Quality Compromise","parents":["SS","ST"],"x":565,"y":395,"impact":150000,"cpt":{"11":0.80,"10":0.50,"01":0.35,"00":0.05} } ] },
+  "network": { "title": "Distribution Network Risk", "impactUnit": "per quarter", "nodes": [
+    { "id":"WX","name":"Regional Weather Event","parents":[],"prior":0.25,"x":150,"y":75 },
+    { "id":"HB","name":"Central Hub Outage","parents":[],"prior":0.08,"x":410,"y":75 },
+    { "id":"LS","name":"Labor Shortage","parents":[],"prior":0.20,"x":670,"y":75 },
+    { "id":"ID","name":"Inbound Delays","parents":["WX","HB"],"x":280,"y":235,"cpt":{"11":0.95,"10":0.60,"01":0.85,"00":0.10} },
+    { "id":"OD","name":"Fulfillment Failure","parents":["HB","LS"],"x":545,"y":235,"cpt":{"11":0.95,"10":0.80,"01":0.45,"00":0.05} },
+    { "id":"SLA","name":"Major SLA Breach","parents":["ID","OD"],"x":280,"y":395,"impact":1200000,"cpt":{"11":0.90,"10":0.40,"01":0.70,"00":0.02} },
+    { "id":"CP","name":"Contract Penalties","parents":["OD"],"x":545,"y":395,"impact":600000,"cpt":{"1":0.50,"0":0.02} } ] }
+};
+
+async function renderHome() {
+  if (!Object.keys(templates).length) {
+    try { templates = await (await fetch("/api/templates")).json(); } catch(e) {}
+    if (!Object.keys(templates).length) templates = TEMPLATES_FALLBACK;
+  }
+  let tpl = Object.entries(templates).map(([k,t]) => `
+    <button class="choice" onclick="loadTemplate('${k}')">
+      <b>${t.title}</b><span>Start from the proven template — rename, re-elicit, and adapt in the workshop</span>
+    </button>`).join("");
+  const savedWiz = store.get("wiz"), savedModel = store.get("model");
+  const resume = (savedWiz ? `
+      <button class="choice" style="border-color:var(--orange);background:#fffaf5" onclick="resumeWizard()">
+        <b>▶ Resume interview in progress${savedWiz.title ? " — " + savedWiz.title : ""}</b>
+        <span>Picks up exactly where you left off (auto-saved) · <a href="#" onclick="event.stopPropagation();store.del('wiz');renderHome();return false">discard</a></span>
+      </button>` : "") + (savedModel ? `
+      <button class="choice" style="border-color:var(--green);background:#f6fbf8" onclick="resumeModel()">
+        <b>▶ Continue last map — ${savedModel.title || "untitled"}</b>
+        <span>Reopens your most recent map with its observations (auto-saved) · <a href="#" onclick="event.stopPropagation();store.del('model');store.del('evidence');renderHome();return false">discard</a></span>
+      </button>` : "");
+  scr.innerHTML = `
+    <div class="card">
+      <h2>Start a risk map</h2>
+      <p class="hint">Pick a template to adapt with a client, or build one from scratch through the guided interview.</p>
+      ${resume}
+      <button class="choice" onclick="startWizard()">
+        <b>＋ Build a new map (guided)</b><span>Five steps: the decision → the risks → the connections → the numbers → the live map</span>
+      </button>
+      ${tpl}
+    </div>`;
+}
+
+function resumeWizard() {
+  const saved = store.get("wiz");
+  if (!saved) return renderHome();
+  wiz = saved;
+  renderWizard();
+}
+function resumeModel() {
+  const saved = store.get("model");
+  if (!saved) return renderHome();
+  model = saved;
+  evidence = store.get("evidence") || {};
+  renderDash();
+}
+
+function loadTemplate(key) {
+  model = JSON.parse(JSON.stringify(templates[key]));
+  evidence = {};
+  renderDash();
+}
+
+/* ================= WIZARD ================= */
+function startWizard() {
+  wiz = { step: 1, title: "", impactUnit: "per quarter",
+          roots: [], mids: [], cons: [], parents: {}, probs: {}, impacts: {}, qIndex: 0, questions: [] };
+  renderWizard();
+}
+const stepsBar = n => `<div class="steps">${[1,2,3,4,5].map(i=>`<div class="${i<=n?"on":""}"></div>`).join("")}</div>`;
+
+function renderWizard() {
+  store.set("wiz", wiz);   // auto-save every wizard interaction
+  if (wiz.step === 1) return wizStep1();
+  if (wiz.step === 2) return wizStep2();
+  if (wiz.step === 3) return wizStep3();
+  if (wiz.step === 4) return wizStep4();
+}
+
+/* ---- step 1: frame ---- */
+function wizStep1() {
+  scr.innerHTML = `
+    <div class="card">${stepsBar(1)}
+      <h2>Step 1 — Frame the decision</h2>
+      <p class="hint">A good risk map supports one recurring decision. Name it in the client's words, e.g. “Acme Corp — key supplier exposure” or “Phoenix programme — delivery risk.”</p>
+      <div class="row"><input type="text" id="wTitle" placeholder="Name this risk map" value="${wiz.title}"></div>
+      <h3>Exposure is measured…</h3>
+      <div class="row">
+        <select id="wUnit" style="padding:9px;border:1px solid #c9d2e0;border-radius:7px;font-size:14px">
+          <option ${wiz.impactUnit==="per quarter"?"selected":""}>per quarter</option>
+          <option ${wiz.impactUnit==="per year"?"selected":""}>per year</option>
+          <option ${wiz.impactUnit==="per project"?"selected":""}>per project</option>
+        </select>
+      </div>
+      <div class="foot"><button class="btn ghost" onclick="store.del('wiz');go('home')">Cancel</button>
+        <button class="btn" onclick="wiz.title=$('wTitle').value.trim()||'Untitled risk map';wiz.impactUnit=$('wUnit').value;wiz.step=2;renderWizard()">Next → the risks</button></div>
+    </div>`;
+}
+
+/* ---- step 2: list risks ---- */
+function addRisk(bucket) {
+  const inp = $("in_" + bucket);
+  const name = inp.value.trim();
+  if (!name) return;
+  wiz[bucket].push(name); inp.value = ""; wizStep2();
+}
+function delRisk(bucket, i) { wiz[bucket].splice(i,1); wizStep2(); }
+
+function wizStep2() {
+  const box = (bucket, title, hint, ph) => `
+    <h3>${title}</h3><p class="hint">${hint}</p>
+    <div>${wiz[bucket].map((r,i)=>`<span class="pill">${r}<button onclick="delRisk('${bucket}',${i})">✕</button></span>`).join("")}</div>
+    <div class="row"><input type="text" id="in_${bucket}" placeholder="${ph}"
+      onkeydown="if(event.key==='Enter')addRisk('${bucket}')">
+      <button class="btn small" onclick="addRisk('${bucket}')">Add</button></div>`;
+  scr.innerHTML = `
+    <div class="card">${stepsBar(2)}
+      <h2>Step 2 — List the risks</h2>
+      <p class="hint">Ask the room: “what could go wrong, what causes it, and what does it cost us?” Keep it to 5–12 risks total — small maps get used, big maps get admired.</p>
+      ${box("roots","Root causes","Things that go wrong on their own — nobody causes them from inside this map.","e.g. Supplier financial stress")}
+      ${box("mids","In-between events","Troubles caused by the root causes, which then cause business damage.","e.g. Delivery delay")}
+      ${box("cons","Business consequences","The outcomes that cost money — each will get a price tag.","e.g. Production stoppage")}
+      <div class="foot"><button class="btn ghost" onclick="wiz.step=1;renderWizard()">← Back</button>
+        <button class="btn" ${wiz.roots.length&&wiz.cons.length?"":"disabled"} onclick="wizToStep3()">Next → the connections</button></div>
+    </div>`;
+}
+
+function wizToStep3() {
+  // build node skeletons with stable ids
+  wiz.nodes = [];
+  const mk = (name, role, i) => ({ id: role + i, name, role, parents: [] });
+  wiz.roots.forEach((n,i)=>wiz.nodes.push(mk(n,"R",i)));
+  wiz.mids.forEach((n,i)=>wiz.nodes.push(mk(n,"M",i)));
+  wiz.cons.forEach((n,i)=>wiz.nodes.push(mk(n,"C",i)));
+  wiz.step = 3; renderWizard();
+}
+
+/* ---- step 3: connections ---- */
+function candidates(node) {
+  // acyclic by construction: mids may have roots + earlier mids; consequences may have roots + mids
+  const nodes = wiz.nodes;
+  if (node.role === "M") {
+    const myIdx = nodes.filter(n=>n.role==="M").indexOf(node);
+    return nodes.filter(n => n.role==="R" || (n.role==="M" && nodes.filter(m=>m.role==="M").indexOf(n) < myIdx));
+  }
+  if (node.role === "C") return nodes.filter(n => n.role==="R" || n.role==="M");
+  return [];
+}
+function togglePar(nid, pid) {
+  const nd = wiz.nodes.find(n=>n.id===nid);
+  const i = nd.parents.indexOf(pid);
+  if (i >= 0) nd.parents.splice(i,1);
+  else if (nd.parents.length >= 3) { toast("Keep it to 3 causes max — each extra cause doubles the questions later."); return; }
+  else nd.parents.push(pid);
+  wizStep3();
+}
+function wizStep3() {
+  const rows = wiz.nodes.filter(n=>n.role!=="R").map(nd => `
+    <div class="qbox"><div class="q"><b>${nd.name}</b> — what directly makes this more likely?</div>
+      <div style="margin-top:8px">${candidates(nd).map(c => `
+        <button class="scale-sel ${nd.parents.includes(c.id)?"sel":""}"
+          style="border:1.5px solid ${nd.parents.includes(c.id)?"var(--blue)":"#c9d2e0"};
+                 background:${nd.parents.includes(c.id)?"var(--blue)":"#fff"};
+                 color:${nd.parents.includes(c.id)?"#fff":"#333"};
+                 border-radius:8px;padding:8px 12px;font-size:12.5px;cursor:pointer;margin:0 6px 6px 0"
+          onclick="togglePar('${nd.id}','${c.id}')">${c.name}</button>`).join("")}
+      </div></div>`).join("");
+  const ok = wiz.nodes.filter(n=>n.role!=="R").every(n=>n.parents.length>0);
+  scr.innerHTML = `
+    <div class="card">${stepsBar(3)}
+      <h2>Step 3 — Connect causes to effects</h2>
+      <p class="hint">For each event, pick its direct causes (up to three). This is the argument worth having in the room — “does weather really affect that supplier?”</p>
+      ${rows}
+      <div class="foot"><button class="btn ghost" onclick="wiz.step=2;renderWizard()">← Back</button>
+        <button class="btn" ${ok?"":"disabled"} onclick="wizBuildQuestions()">Next → the numbers</button></div>
+    </div>`;
+}
+
+/* ---- step 4: elicitation ---- */
+function wizBuildQuestions() {
+  const byId = {}; wiz.nodes.forEach(n=>byId[n.id]=n);
+  wiz.questions = [];
+  for (const nd of wiz.nodes) {
+    if (nd.role === "R") {
+      wiz.questions.push({ type:"prior", id:nd.id,
+        text:`Thinking about a typical period ${wiz.impactUnit.replace("per ","(per ")+")"}: how often is <b>${nd.name}</b> actually present?` });
+    } else {
+      const combos = [];
+      for (let m = (1 << nd.parents.length) - 1; m >= 0; m--)
+        combos.push(nd.parents.map((_,i)=>(m>>(nd.parents.length-1-i))&1));
+      for (const combo of combos) {
+        const conds = combo.map((b,i)=>`${byId[nd.parents[i]].name}: ${b?"YES":"no"}`).join(" · ");
+        wiz.questions.push({ type:"cpt", id:nd.id, key: combo.join(""),
+          cond: conds,
+          text:`In that situation, how likely is <b>${nd.name}</b>?` });
+      }
+    }
+    if (nd.role === "C") {
+      wiz.questions.push({ type:"impact", id:nd.id,
+        text:`When <b>${nd.name}</b> last happened, roughly what did it cost, all-in (expediting, penalties, lost margin, management time)?` });
+    }
+  }
+  wiz.qIndex = 0; wiz.step = 4; renderWizard();
+}
+
+function answerScale(p) {
+  const q = wiz.questions[wiz.qIndex];
+  if (q.type === "prior") wiz.probs[q.id + "|"] = p;
+  else wiz.probs[q.id + "|" + q.key] = p;
+  nextQ();
+}
+function answerImpact() {
+  const v = parseFloat($("impIn").value);
+  if (!(v > 0)) { toast("Enter a cost in dollars"); return; }
+  wiz.impacts[wiz.questions[wiz.qIndex].id] = v;
+  nextQ();
+}
+function nextQ() { wiz.qIndex++; if (wiz.qIndex >= wiz.questions.length) return wizFinish(); renderWizard(); }
+function prevQ() { if (wiz.qIndex === 0) { wiz.step = 3; renderWizard(); } else { wiz.qIndex--; renderWizard(); } }
+
+function wizStep4() {
+  const q = wiz.questions[wiz.qIndex];
+  const progress = `${wiz.qIndex + 1} of ${wiz.questions.length}`;
+  let body;
+  if (q.type === "impact") {
+    body = `<div class="row" style="max-width:340px"><span style="font-size:18px;color:var(--gray)">$</span>
+      <input type="number" id="impIn" placeholder="e.g. 500000" min="0" step="1000"
+        onkeydown="if(event.key==='Enter')answerImpact()">
+      <button class="btn small" onclick="answerImpact()">Set</button></div>
+      <p class="hint" style="margin-top:8px">Use their number, not yours. If they debate it, that's the workshop working.</p>`;
+  } else {
+    const cur = q.type==="prior" ? wiz.probs[q.id+"|"] : wiz.probs[q.id+"|"+q.key];
+    body = `<div class="scale">${SCALE.map(([lab,p]) =>
+      `<button class="${cur===p?"sel":""}" onclick="answerScale(${p})">${lab}<br><span style="opacity:.65">${Math.round(p*100)}%</span></button>`).join("")}</div>
+      <p class="hint" style="margin-top:8px">Words first, numbers second — the percentages are just the bookkeeping.</p>`;
+  }
+  scr.innerHTML = `
+    <div class="card">${stepsBar(4)}
+      <h2>Step 4 — The numbers <span style="font-size:13px;color:var(--gray);font-weight:400">· question ${progress}</span></h2>
+      <div class="qbox">
+        ${q.cond ? `<div class="cond">Imagine: ${q.cond}</div>` : ""}
+        <div class="q">${q.text}</div>
+      </div>
+      ${body}
+      <div class="foot"><button class="btn ghost" onclick="prevQ()">← Back</button><span></span></div>
+    </div>`;
+  if (q.type === "impact") setTimeout(()=>$("impIn") && $("impIn").focus(), 50);
+}
+
+function wizFinish() {
+  const roleY = { R: 75, M: 235, C: 395 };
+  const byRole = { R: [], M: [], C: [] };
+  wiz.nodes.forEach(n => byRole[n.role].push(n));
+  const nodes = wiz.nodes.map(nd => {
+    const group = byRole[nd.role], i = group.indexOf(nd);
+    const x = 820 * (i + 1) / (group.length + 1);
+    const out = { id: nd.id, name: nd.name, parents: nd.parents, x, y: roleY[nd.role] };
+    if (!nd.parents.length) out.prior = wiz.probs[nd.id + "|"] ?? 0.1;
+    else {
+      out.cpt = {};
+      for (let m = 0; m < (1 << nd.parents.length); m++) {
+        const key = nd.parents.map((_,j)=>(m>>(nd.parents.length-1-j))&1).join("");
+        out.cpt[key] = wiz.probs[nd.id + "|" + key] ?? 0.1;
+      }
+    }
+    if (wiz.impacts[nd.id]) out.impact = wiz.impacts[nd.id];
+    return out;
+  });
+  model = { title: wiz.title, impactUnit: wiz.impactUnit, nodes };
+  evidence = {};
+  store.del("wiz");   // interview complete — clear the in-progress save
+  renderDash();
+}
+
+/* ================= DASHBOARD ================= */
+const NW = 200, NH = 96;
+function edgePath(a,b){ const x1=a.x,y1=a.y+NH/2,x2=b.x,y2=b.y-NH/2-6,my=(y1+y2)/2;
+  return `M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`; }
+
+async function renderDash() {
+  if (!model) return go("home");
+  store.set("model", model);   // auto-save the active map
+  scr.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h2>${model.title || "Risk map"}</h2>
+      <div><button class="btn small ghost" onclick="evidence={};renderDash()">Clear observations</button></div>
+    </div>
+    <div class="dash">
+      <div class="canvas"><svg id="net" viewBox="0 0 820 470" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      <div class="side">
+        <div class="exp"><div class="lab">Expected exposure</div>
+          <div class="val" id="expNow">…</div><div class="base" id="expBase"></div></div>
+        <h4>Key drivers — where to focus</h4><div id="drivers">…</div>
+        <h4>How to use</h4>
+        <p style="font-size:12.5px;color:var(--gray);line-height:1.55">Click a risk to record what you've observed: once = YES, twice = NO, third click clears. Every number updates from the evidence — forwards and backwards.</p>
+      </div>
+    </div>`;
+  const r = await api("/api/infer", { network: model, evidence: {} });
+  baseline = r.marginals; baseExposure = r.exposure;
+  await refresh();
+}
+
+async function refresh() {
+  store.set("evidence", evidence);   // auto-save observations
+  const [inf, drv] = await Promise.all([
+    api("/api/infer", { network: model, evidence }),
+    api("/api/drivers", { network: model, evidence }),
+  ]);
+  drawNet(inf.marginals);
+  // exposure
+  const now = inf.exposure, d = now - baseExposure;
+  $("expNow").textContent = fmtMoney(now) + " " + (model.impactUnit || "");
+  $("expNow").style.color = d > 500 ? "#ffb3a7" : d < -500 ? "#a7e8c3" : "#fff";
+  $("expBase").textContent = Math.abs(d) < 500 ? "at baseline" :
+    `baseline ${fmtMoney(baseExposure)} (${d>0?"▲ +":"▼ −"}${fmtMoney(Math.abs(d))})`;
+  // drivers
+  const rows = drv.drivers;
+  const max = Math.max(...rows.map(x=>x.swing), 1);
+  $("drivers").innerHTML = rows.length ? rows.map((rw,i)=>`
+    <div class="drv">
+      <div class="top"><span style="font-weight:${i===0?700:400};color:${i===0?"var(--red)":"#333"}">${rw.name}
+        <span style="color:var(--gray);font-weight:400">(${Math.round(rw.prior*100)}%)</span></span>
+        <span style="font-weight:700;color:${i===0?"var(--red)":"var(--blue)"}">${fmtMoney(rw.swing)}</span></div>
+      <div class="bar"><div class="fill" style="width:${Math.max(3,100*rw.swing/max)}%;background:${i===0?"var(--red)":"var(--blue)"}"></div></div>
+      <div class="sub">5-pt likelihood cut saves ${fmtMoney(rw.save5)} ${model.impactUnit||""}</div>
+    </div>`).join("")
+    : `<p style="font-size:12.5px;color:var(--gray)">Add impact values to consequences to rank drivers${
+        model.nodes.some(n=>n.impact) ? " (all roots observed)" : ""}.</p>`;
+}
+
+function drawNet(probs) {
+  const byId = {}; model.nodes.forEach(n=>byId[n.id]=n);
+  let s = `<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+    orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f3a5f"/></marker></defs>`;
+  for (const nd of model.nodes) for (const p of nd.parents) s += `<path class="edge" d="${edgePath(byId[p], nd)}"/>`;
+  for (const nd of model.nodes) {
+    const pr = probs[nd.id], base = baseline[nd.id], ev = evidence[nd.id];
+    const cls = ev===true?"evYes":ev===false?"evNo":"";
+    const delta = Math.round((pr-base)*100);
+    const bx = nd.x-NW/2+14, bw = NW-28;
+    s += `<g class="node ${cls}" data-id="${nd.id}">
+      <rect class="body" x="${nd.x-NW/2}" y="${nd.y-NH/2}" width="${NW}" height="${NH}" rx="10"/>
+      <text class="name" x="${nd.x}" y="${nd.y-NH/2+21}" text-anchor="middle">${nd.name.length>28?nd.name.slice(0,27)+"…":nd.name}</text>
+      <rect class="barbg" x="${bx}" y="${nd.y-4}" width="${bw}" height="9" rx="4"/>
+      <rect class="barfill" x="${bx}" y="${nd.y-4}" width="${bw*pr}" height="9" rx="4"/>
+      <line class="barbase" x1="${bx+bw*base}" y1="${nd.y-7}" x2="${bx+bw*base}" y2="${nd.y+8}"/>
+      <text class="pct" x="${bx}" y="${nd.y+27}">${Math.round(pr*100)}%</text>
+      ${Math.abs(delta)>=1?`<text x="${bx+bw}" y="${nd.y+27}" text-anchor="end" font-size="11" font-weight="700"
+        fill="${delta>0?"#b84a4a":"#3a7d5c"}">${delta>0?"▲ +"+delta:"▼ "+delta} pts</text>`:""}
+      ${ev!==undefined?`<text x="${nd.x}" y="${nd.y-NH/2+37}" text-anchor="middle" font-size="10" font-weight="700"
+        fill="${ev?"#b84a4a":"#3a7d5c"}">OBSERVED: ${ev?"YES":"NO"}</text>`:""}
+      ${nd.impact?`<text x="${nd.x}" y="${nd.y+NH/2-6}" text-anchor="middle" font-size="10" fill="#6b7280">impact if it occurs: ${fmtMoney(nd.impact)}</text>`:""}
+    </g>`;
+  }
+  $("net").innerHTML = s;
+  $("net").querySelectorAll(".node").forEach(g => g.addEventListener("click", () => {
+    const id = g.dataset.id;
+    if (evidence[id]===undefined) evidence[id]=true;
+    else if (evidence[id]===true) evidence[id]=false;
+    else delete evidence[id];
+    refresh();
+  }));
+}
+
+/* ================= import / export ================= */
+function exportModel() {
+  if (!model) return toast("Nothing to export yet");
+  const blob = new Blob([JSON.stringify(model, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (model.title || "risk_map").replace(/[^a-z0-9]+/gi, "_") + ".json";
+  a.click();
+}
+function importModel(evt) {
+  const f = evt.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { model = JSON.parse(rd.result); evidence = {}; renderDash(); }
+    catch(e) { toast("Not a valid risk map file"); } };
+  rd.readAsText(f);
+  evt.target.value = "";
+}
+
+renderHome();
+</script>
+</body>
+</html>
